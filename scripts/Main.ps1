@@ -6,11 +6,20 @@ $MySQLDatabase = 'osticket'
 $MySQLHost = 'localhost'
 $ConnectionString = "server=" + $MySQLHost + ";port=3306;uid=" + $MySQLAdminUserName + ";pwd=" + $MySQLAdminPassword + ";database="+$MySQLDatabase
 $Query = 
-"select osticket.ost_staff.username, count(*) 
-from osticket.ost_staff
-inner join osticket.ost_ticket 
+"select osticket.ost_staff.username as 'Staff Memebrs', count(*) as 'Open Tickets'
+from osticket.ost_staff inner join osticket.ost_ticket 
 on osticket.ost_staff.staff_id = osticket.ost_ticket.staff_id 
-and osticket.ost_ticket.status like 'open' group by osticket.ost_staff.staff_id;"
+and osticket.ost_ticket.status like 'open'
+and (
+	osticket.ost_staff.username like 'AntonT' or osticket.ost_staff.username like 'Igor' 
+    or osticket.ost_staff.username like 'Ildar.Sh'
+    or osticket.ost_staff.username like 'Juli'
+    or osticket.ost_staff.username like 'Pavel'
+    or osticket.ost_staff.username like 'SergeyK'
+    or osticket.ost_staff.username like 'Vladimir'
+)
+group by osticket.ost_staff.staff_id
+order by osticket.ost_staff.username;"
 
 
 Try {
@@ -50,7 +59,13 @@ $d = $c -replace ("<td></td><td>Unchanged</td><td>data</td><td>System.Object\[\]
 
 #sending email
 
-$secpasswd = ConvertTo-SecureString "!234igbyfn" -AsPlainText -Force
+#generating string for a subject
+$date = Get-Date -UFormat '%d %B %Y'
+$subject = "osTicket Stats (" + $date.ToString() +")"
+
+$pass = Read-Host "Password for DEV\vladimir.m"
+
+$secpasswd = ConvertTo-SecureString $pass -AsPlainText -Force
 $mycreds = New-Object System.Management.Automation.PSCredential ("vlad.m@cloudberrylab.com", $secpasswd)
-Send-MailMessage -to "vlad.m@cloudberrylab.com" -Subject "OsTicket daily stats" -Body $d -BodyAsHtml -SMTP "smtp.gmail.com" -From "vlad.m@cloudberrylab.com" -Credential $mycreds -UseSsl
+Send-MailMessage -to "vlad.m@cloudberrylab.com" -Subject $subject -Body $d -BodyAsHtml -SMTP "smtp.gmail.com" -From "vlad.m@cloudberrylab.com" -Credential $mycreds -UseSsl
 
