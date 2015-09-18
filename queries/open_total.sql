@@ -1,0 +1,1 @@
+select count(*) from osticket.ost_ticket where status like 'open';
