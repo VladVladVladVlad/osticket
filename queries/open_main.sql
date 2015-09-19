@@ -1,5 +1,5 @@
 (
-	select osticket.ost_staff.username as 'Staff Memebrs', count(*) as 'Open Tickets'
+	select osticket.ost_staff.username as 'Name', count(*) as 'Open'
 	from osticket.ost_staff inner join osticket.ost_ticket 
 	on osticket.ost_staff.staff_id = osticket.ost_ticket.staff_id 
 	and osticket.ost_ticket.status like 'open'
@@ -10,6 +10,7 @@
 		or osticket.ost_staff.username like 'Pavel'
 		or osticket.ost_staff.username like 'SergeyK'
 		or osticket.ost_staff.username like 'Vladimir'
+        or osticket.ost_staff.username like 'AntonZ'
 	)
 	group by osticket.ost_staff.staff_id
 	#order by osticket.ost_staff.username asc
@@ -27,6 +28,7 @@ union all
 		or osticket.ost_staff.username like 'Pavel'
 		or osticket.ost_staff.username like 'SergeyK'
 		or osticket.ost_staff.username like 'Vladimir'
+        or osticket.ost_staff.username like 'AntonZ'
 	)
 )
 order by 1;

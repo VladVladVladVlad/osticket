@@ -7,7 +7,7 @@ $MySQLHost = 'localhost'
 $ConnectionString = "server=" + $MySQLHost + ";port=3306;uid=" + $MySQLAdminUserName + ";pwd=" + $MySQLAdminPassword + ";database="+$MySQLDatabase
 $Query = 
 "(
-	select osticket.ost_staff.username as 'Staff Memebrs', count(*) as 'Open Tickets'
+	select osticket.ost_staff.username as 'Name', count(*) as 'Open'
 	from osticket.ost_staff inner join osticket.ost_ticket 
 	on osticket.ost_staff.staff_id = osticket.ost_ticket.staff_id 
 	and osticket.ost_ticket.status like 'open'
@@ -18,6 +18,7 @@ $Query =
 		or osticket.ost_staff.username like 'Pavel'
 		or osticket.ost_staff.username like 'SergeyK'
 		or osticket.ost_staff.username like 'Vladimir'
+        or osticket.ost_staff.username like 'AntonZ'
 	)
 	group by osticket.ost_staff.staff_id
 	#order by osticket.ost_staff.username asc
@@ -35,6 +36,7 @@ union all
 		or osticket.ost_staff.username like 'Pavel'
 		or osticket.ost_staff.username like 'SergeyK'
 		or osticket.ost_staff.username like 'Vladimir'
+        or osticket.ost_staff.username like 'AntonZ'
 	)
 )
 order by 1;"
@@ -72,8 +74,11 @@ For ($i = 0; $i -lt $a.Length; $i++)
     [string]$b = [string]$b + $a.Item($i).tostring()
 }
 
-$c = $b -replace ("<th>RowError</th><th>RowState</th><th>Table</th><th>ItemArray</th><th>HasErrors</th></tr>", "")
-$d = $c -replace ("<td></td><td>Unchanged</td><td>data</td><td>System.Object\[\]</td><td>False</td></tr>", "")
+$b = $b -replace ("<th>RowError</th><th>RowState</th><th>Table</th><th>ItemArray</th><th>HasErrors</th></tr>", "")
+$b = $b -replace ("<td></td><td>Unchanged</td><td>data</td><td>System.Object\[\]</td><td>False</td></tr>", "")
+$b = $b -replace ("<head>","<head><style>table,th,td{border: 1px solid black;} table{border-collapse:collapse;} table {width: 20%;}</style>")
+
+
 
 #sending email
 
@@ -83,7 +88,8 @@ $subject = "osTicket Stats (" + $date.ToString() +")"
 
 $pass = Read-Host "Password for DEV\vladimir.m"
 
+
 $secpasswd = ConvertTo-SecureString $pass -AsPlainText -Force
 $mycreds = New-Object System.Management.Automation.PSCredential ("vlad.m@cloudberrylab.com", $secpasswd)
-Send-MailMessage -to "vlad.m@cloudberrylab.com" -Subject $subject -Body $d -BodyAsHtml -SMTP "smtp.gmail.com" -From "vlad.m@cloudberrylab.com" -Credential $mycreds -UseSsl
+Send-MailMessage -to "vlad.m@cloudberrylab.com" -Subject $subject -Body $b -BodyAsHtml -SMTP "smtp.gmail.com" -From "vlad.m@cloudberrylab.com" -Credential $mycreds -UseSsl
 
