@@ -75,9 +75,13 @@ For ($i = 0; $i -lt $a.Length; $i++)
 }
 
 $b = $b -replace ("<th>RowError</th><th>RowState</th><th>Table</th><th>ItemArray</th><th>HasErrors</th></tr>", "")
+$b = $b -replace ('<colgroup><col/><col/><col/><col/><col/><col/><col/></colgroup>','')
+
 $b = $b -replace ("<td></td><td>Unchanged</td><td>data</td><td>System.Object\[\]</td><td>False</td></tr>", "")
 $b = $b -replace ("<head>","<head><style>table,th,td{border: 1px solid black;} table{border-collapse:collapse;} table {width: 20%;}</style>")
 
+$b = $b -replace ('<th>Name</th>','<th align="left">Name</th>')
+$b = $b -replace ('<th>Open</th>','<th align="left">Open</th>')
 
 
 #sending email
